@@ -1,11 +1,715 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elvis</title>
+    <title>Simulador de Lógica de Programação</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: flex;
+            min-height: 600px;
+        }
+        
+        .sidebar {
+            width: 300px;
+            background: #f8f9fa;
+            padding: 30px;
+            border-right: 2px solid #eee;
+        }
+        
+        .lesson-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+        
+        .lesson-btn:hover {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+        
+        .lesson-btn.active {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+        
+        .content-area {
+            flex: 1;
+            padding: 30px;
+        }
+        
+        .lesson-content {
+            display: none;
+        }
+        
+        .lesson-content.active {
+            display: block;
+        }
+        
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .visual-demo {
+            background: #f0f8ff;
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .robot {
+            font-size: 3em;
+            margin: 10px;
+            display: inline-block;
+            transition: all 0.5s;
+        }
+        
+        .step {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px 0;
+            font-weight: bold;
+        }
+        
+        .exercise {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #4CAF50;
+        }
+        
+        .run-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: all 0.3s;
+        }
+        
+        .run-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+        
+        .output {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: monospace;
+            min-height: 100px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            width: 0;
+            transition: width 0.5s;
+        }
+        
+        .quiz {
+            background: #fff;
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .quiz-option {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .quiz-option:hover {
+            background: #e9ecef;
+        }
+        
+        .correct {
+            background: #d4edda !important;
+            border-color: #c3e6cb !important;
+        }
+        
+        .incorrect {
+            background: #f8d7da !important;
+            border-color: #f5c6cb !important;
+        }
+    </style>
 </head>
 <body>
-    <h1>Elvis Massar</h1>
-</body>
-</html>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Simulador de Lógica de Programação</h1>
+            <p>Aprenda programação de forma visual e interativa!</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="sidebar">
+                <h3>📚 Lições</h3>
+                <button class="lesson-btn active" onclick="showLesson('sequencia')">1. Sequência</button>
+                <button class="lesson-btn" onclick="showLesson('condicoes')">2. Condições (SE/SENÃO)</button>
+                <button class="lesson-btn" onclick="showLesson('loops')">3. Repetições (PARA)</button>
+                <button class="lesson-btn" onclick="showLesson('algoritmos')">4. Algoritmos do Dia a Dia</button>
+                <button class="lesson-btn" onclick="showLesson('desafios')">5. Desafios</button>
+                
+                <div class="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+                <p id="progress-text">Progresso: 0%</p>
+            </div>
+            
+            <div class="content-area">
+                <!-- Lição 1: Sequência -->
+                <div class="lesson-content active" id="sequencia">
+                    <h2>🎯 Lição 1: Sequência</h2>
+                    <p>Na programação, as instruções são executadas uma após a outra, em sequência!</p>
+                    
+                    <div class="code-block">
+ALGORITMO: Fazer um sanduíche
+INÍCIO
+    1. Pegar o pão
+    2. Passar manteiga
+    3. Colocar presunto
+    4. Fechar o sanduíche
+FIM
+                    </div>
+                    
+                    <div class="visual-demo" id="demo-sequencia">
+                        <p><strong>Robô fazendo sanduíche:</strong></p>
+                        <div id="robot-sequencia">🤖</div>
+                        <div id="steps-sequencia"></div>
+                        <button class="run-btn" onclick="runSequencia()">▶️ Executar</button>
+                        <button class="run-btn" onclick="resetDemo('sequencia')" style="background: #6c757d;">🔄 Resetar</button>
+                    </div>
+                    
+                    <div class="exercise">
+                        <h3>💡 Exercício:</h3>
+                        <p>Coloque as instruções na ordem correta para escovar os dentes:</p>
+                        <div class="quiz">
+                            <p><strong>Qual é a sequência correta?</strong></p>
+                            <label class="quiz-option">
+                                <input type="radio" name="seq1" value="wrong"> Enxaguar → Pasta → Escovar → Molhar escova
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="seq1" value="correct"> Molhar escova → Pasta → Escovar → Enxaguar
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="seq1" value="wrong"> Escovar → Molhar → Pasta → Enxaguar
+                            </label>
+                            <button class="run-btn" onclick="checkAnswer('seq1')">Verificar</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Lição 2: Condições -->
+                <div class="lesson-content" id="condicoes">
+                    <h2>🤔 Lição 2: Condições (SE/SENÃO)</h2>
+                    <p>Às vezes precisamos tomar decisões no nosso programa!</p>
+                    
+                    <div class="code-block">
+SE chovendo = verdadeiro ENTÃO
+    Levar guarda-chuva
+SENÃO
+    Não levar guarda-chuva
+FIM SE
+                    </div>
+                    
+                    <div class="visual-demo" id="demo-condicoes">
+                        <p><strong>Decisão do Robô:</strong></p>
+                        <div id="robot-condicoes">🤖</div>
+                        <div id="weather-status">🌤️ Ensolarado</div>
+                        <button class="run-btn" onclick="changeWeather()">🌦️ Mudar Tempo</button>
+                        <button class="run-btn" onclick="runCondicoes()">▶️ Decidir</button>
+                        <div id="decision-result"></div>
+                    </div>
+                    
+                    <div class="exercise">
+                        <h3>💡 Exercício:</h3>
+                        <div class="quiz">
+                            <p><strong>Se a idade for maior que 18, o que acontece?</strong></p>
+                            <div class="code-block" style="font-size: 14px;">
+SE idade > 18 ENTÃO
+    ESCREVER "Pode dirigir"
+SENÃO
+    ESCREVER "Não pode dirigir"
+FIM SE
+                            </div>
+                            <p>Para idade = 20:</p>
+                            <label class="quiz-option">
+                                <input type="radio" name="cond1" value="correct"> "Pode dirigir"
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="cond1" value="wrong"> "Não pode dirigir"
+                            </label>
+                            <button class="run-btn" onclick="checkAnswer('cond1')">Verificar</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Lição 3: Loops -->
+                <div class="lesson-content" id="loops">
+                    <h2>🔁 Lição 3: Repetições (PARA)</h2>
+                    <p>Para fazer algo várias vezes, usamos loops!</p>
+                    
+                    <div class="code-block">
+PARA i DE 1 ATÉ 3 FAÇA
+    ESCREVER "Palmas número " + i
+FIM PARA
+                    </div>
+                    
+                    <div class="visual-demo" id="demo-loops">
+                        <p><strong>Robô batendo palmas:</strong></p>
+                        <div id="robot-loops">🤖</div>
+                        <div id="clap-counter">Palmas: 0</div>
+                        <button class="run-btn" onclick="runLoop()">▶️ Começar Loop</button>
+                        <button class="run-btn" onclick="resetDemo('loops')" style="background: #6c757d;">🔄 Resetar</button>
+                        <div class="output" id="loop-output"></div>
+                    </div>
+                    
+                    <div class="exercise">
+                        <h3>💡 Exercício:</h3>
+                        <div class="quiz">
+                            <p><strong>Quantas vezes "Olá" será escrito?</strong></p>
+                            <div class="code-block" style="font-size: 14px;">
+PARA i DE 1 ATÉ 5 FAÇA
+    ESCREVER "Olá"
+FIM PARA
+                            </div>
+                            <label class="quiz-option">
+                                <input type="radio" name="loop1" value="wrong"> 4 vezes
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="loop1" value="correct"> 5 vezes
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="loop1" value="wrong"> 6 vezes
+                            </label>
+                            <button class="run-btn" onclick="checkAnswer('loop1')">Verificar</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Lição 4: Algoritmos -->
+                <div class="lesson-content" id="algoritmos">
+                    <h2>🏠 Lição 4: Algoritmos do Dia a Dia</h2>
+                    <p>Algoritmos são sequências de passos para resolver problemas!</p>
+                    
+                    <div class="exercise">
+                        <h3>📝 Descreva o algoritmo:</h3>
+                        <p>Como você faria um bolo? Escreva os passos:</p>
+                        <textarea id="cake-algorithm" style="width: 100%; height: 150px; padding: 10px; border-radius: 5px; border: 1px solid #ddd;" placeholder="1. Separar os ingredientes&#10;2. ..."></textarea>
+                        <button class="run-btn" onclick="checkCakeAlgorithm()">Verificar Algoritmo</button>
+                        <div id="cake-feedback"></div>
+                    </div>
+                    
+                    <div class="visual-demo">
+                        <h3>🎮 Jogo: Guie o Robô</h3>
+                        <p>Use comandos para levar o robô até o tesouro!</p>
+                        <div id="game-grid" style="display: grid; grid-template-columns: repeat(5, 50px); gap: 2px; justify-content: center; margin: 20px 0;">
+                        </div>
+                        <div>
+                            <button class="run-btn" onclick="moveRobot('up')">⬆️</button>
+                            <button class="run-btn" onclick="moveRobot('down')">⬇️</button>
+                            <button class="run-btn" onclick="moveRobot('left')">⬅️</button>
+                            <button class="run-btn" onclick="moveRobot('right')">➡️</button>
+                            <button class="run-btn" onclick="resetGame()" style="background: #6c757d;">🔄 Resetar</button>
+                        </div>
+                        <div id="game-status"></div>
+                    </div>
+                </div>
+                
+                <!-- Lição 5: Desafios -->
+                <div class="lesson-content" id="desafios">
+                    <h2>🏆 Lição 5: Desafios</h2>
+                    <p>Teste seus conhecimentos com estes desafios!</p>
+                    
+                    <div class="quiz">
+                        <h3>🧩 Desafio 1: Complete o algoritmo</h3>
+                        <p>Complete o algoritmo para encontrar o maior número:</p>
+                        <div class="code-block">
+SE número1 ___ número2 ENTÃO
+    maior = número1
+SENÃO
+    maior = ___
+FIM SE
+                        </div>
+                        <select id="challenge1-1" style="padding: 5px; margin: 5px;">
+                            <option value="">Escolha...</option>
+                            <option value="correct">&gt;</option>
+                            <option value="wrong">&lt;</option>
+                            <option value="wrong">=</option>
+                        </select>
+                        <select id="challenge1-2" style="padding: 5px; margin: 5px;">
+                            <option value="">Escolha...</option>
+                            <option value="wrong">número1</option>
+                            <option value="correct">número2</option>
+                            <option value="wrong">0</option>
+                        </select>
+                        <button class="run-btn" onclick="checkChallenge1()">Verificar</button>
+                        <div id="challenge1-result"></div>
+                    </div>
+                    
+                    <div class="quiz">
+                        <h3>🎯 Desafio 2: Trace o algoritmo</h3>
+                        <p>Execute mentalmente este código e diga o resultado:</p>
+                        <div class="code-block">
+soma = 0
+PARA i DE 1 ATÉ 3 FAÇA
+    soma = soma + i
+FIM PARA
+ESCREVER soma
+                        </div>
+                        <input type="number" id="challenge2-answer" placeholder="Resultado..." style="padding: 10px; margin: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                        <button class="run-btn" onclick="checkChallenge2()">Verificar</button>
+                        <div id="challenge2-result"></div>
+                        <div id="trace-steps" style="margin-top: 10px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentLesson = 'sequencia';
+        let completedLessons = new Set();
+        let weather = 'sunny'; // sunny or rainy
+        let robotPos = {x: 0, y: 0};
+        let treasurePos = {x: 4, y: 4};
+        
+        function showLesson(lessonId) {
+            // Hide all lessons
+            document.querySelectorAll('.lesson-content').forEach(lesson => {
+                lesson.classList.remove('active');
+            });
+            
+            // Hide all lesson buttons active state
+            document.querySelectorAll('.lesson-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected lesson
+            document.getElementById(lessonId).classList.add('active');
+            event.target.classList.add('active');
+            currentLesson = lessonId;
+            
+            // Initialize lesson-specific content
+            if (lessonId === 'algoritmos') {
+                initGame();
+            }
+        }
+        
+        function runSequencia() {
+            const steps = [
+                "🍞 Pegando o pão...",
+                "🧈 Passando manteiga...",
+                "🥓 Colocando presunto...",
+                "🥪 Fechando o sanduíche... Pronto!"
+            ];
+            
+            const stepsDiv = document.getElementById('steps-sequencia');
+            const robot = document.getElementById('robot-sequencia');
+            
+            stepsDiv.innerHTML = '';
+            let stepIndex = 0;
+            
+            const interval = setInterval(() => {
+                if (stepIndex < steps.length) {
+                    const stepDiv = document.createElement('div');
+                    stepDiv.className = 'step';
+                    stepDiv.textContent = steps[stepIndex];
+                    stepsDiv.appendChild(stepDiv);
+                    
+                    // Animate robot
+                    robot.style.transform = `rotate(${stepIndex * 90}deg)`;
+                    
+                    stepIndex++;
+                } else {
+                    clearInterval(interval);
+                    robot.innerHTML = '🤖🥪';
+                    completedLessons.add('sequencia');
+                    updateProgress();
+                }
+            }, 1000);
+        }
+        
+        function resetDemo(type) {
+            if (type === 'sequencia') {
+                document.getElementById('steps-sequencia').innerHTML = '';
+                document.getElementById('robot-sequencia').innerHTML = '🤖';
+                document.getElementById('robot-sequencia').style.transform = 'rotate(0deg)';
+            } else if (type === 'loops') {
+                document.getElementById('loop-output').innerHTML = '';
+                document.getElementById('clap-counter').textContent = 'Palmas: 0';
+                document.getElementById('robot-loops').innerHTML = '🤖';
+            }
+        }
+        
+        function changeWeather() {
+            weather = weather === 'sunny' ? 'rainy' : 'sunny';
+            const weatherDiv = document.getElementById('weather-status');
+            weatherDiv.textContent = weather === 'sunny' ? '🌤️ Ensolarado' : '🌧️ Chuvoso';
+        }
+        
+        function runCondicoes() {
+            const resultDiv = document.getElementById('decision-result');
+            const robot = document.getElementById('robot-condicoes');
+            
+            if (weather === 'rainy') {
+                resultDiv.innerHTML = '<div class="step">☂️ Vou levar o guarda-chuva!</div>';
+                robot.innerHTML = '🤖☂️';
+            } else {
+                resultDiv.innerHTML = '<div class="step">😎 Não preciso de guarda-chuva!</div>';
+                robot.innerHTML = '🤖😎';
+            }
+            
+            completedLessons.add('condicoes');
+            updateProgress();
+        }
+        
+        function runLoop() {
+            const output = document.getElementById('loop-output');
+            const counter = document.getElementById('clap-counter');
+            const robot = document.getElementById('robot-loops');
+            
+            output.innerHTML = '';
+            let i = 1;
+            
+            const interval = setInterval(() => {
+                if (i <= 3) {
+                    output.innerHTML += `Palmas número ${i}<br>`;
+                    counter.textContent = `Palmas: ${i}`;
+                    robot.innerHTML = i % 2 === 0 ? '🤖👏' : '🤖✋';
+                    i++;
+                } else {
+                    clearInterval(interval);
+                    robot.innerHTML = '🤖✅';
+                    completedLessons.add('loops');
+                    updateProgress();
+                }
+            }, 1000);
+        }
+        
+        function checkAnswer(questionName) {
+            const selected = document.querySelector(`input[name="${questionName}"]:checked`);
+            if (!selected) {
+                alert('Por favor, selecione uma resposta!');
+                return;
+            }
+            
+            const options = document.querySelectorAll(`input[name="${questionName}"]`);
+            options.forEach(option => {
+                const label = option.parentElement;
+                if (option.value === 'correct') {
+                    label.classList.add('correct');
+                } else if (option.checked && option.value === 'wrong') {
+                    label.classList.add('incorrect');
+                }
+            });
+            
+            if (selected.value === 'correct') {
+                alert('🎉 Correto! Muito bem!');
+                if (questionName === 'seq1') completedLessons.add('sequencia');
+                if (questionName === 'cond1') completedLessons.add('condicoes');
+                if (questionName === 'loop1') completedLessons.add('loops');
+                updateProgress();
+            } else {
+                alert('❌ Tente novamente! Pense na lógica...');
+            }
+        }
+        
+        function checkCakeAlgorithm() {
+            const algorithm = document.getElementById('cake-algorithm').value;
+            const feedback = document.getElementById('cake-feedback');
+            
+            const keywords = ['ingredientes', 'misturar', 'forno', 'assar'];
+            const hasKeywords = keywords.some(word => algorithm.toLowerCase().includes(word));
+            
+            if (algorithm.length > 50 && hasKeywords) {
+                feedback.innerHTML = '<div class="step" style="background: #d4edda;">🎉 Ótimo algoritmo! Você pensou nos passos principais!</div>';
+                completedLessons.add('algoritmos');
+                updateProgress();
+            } else {
+                feedback.innerHTML = '<div class="step" style="background: #f8d7da;">💡 Tente incluir mais detalhes: ingredientes, como misturar, temperatura do forno, tempo...</div>';
+            }
+        }
+        
+        function initGame() {
+            const grid = document.getElementById('game-grid');
+            grid.innerHTML = '';
+            
+            for (let y = 0; y < 5; y++) {
+                for (let x = 0; x < 5; x++) {
+                    const cell = document.createElement('div');
+                    cell.style.cssText = 'width: 50px; height: 50px; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; background: white;';
+                    
+                    if (x === robotPos.x && y === robotPos.y) {
+                        cell.textContent = '🤖';
+                        cell.style.background = '#e3f2fd';
+                    } else if (x === treasurePos.x && y === treasurePos.y) {
+                        cell.textContent = '💎';
+                        cell.style.background = '#fff8e1';
+                    }
+                    
+                    grid.appendChild(cell);
+                }
+            }
+            
+            document.getElementById('game-status').textContent = 'Use as setas para mover o robô até o tesouro!';
+        }
+        
+        function moveRobot(direction) {
+            const newPos = {...robotPos};
+            
+            switch(direction) {
+                case 'up': newPos.y = Math.max(0, newPos.y - 1); break;
+                case 'down': newPos.y = Math.min(4, newPos.y + 1); break;
+                case 'left': newPos.x = Math.max(0, newPos.x - 1); break;
+                case 'right': newPos.x = Math.min(4, newPos.x + 1); break;
+            }
+            
+            robotPos = newPos;
+            initGame();
+            
+            if (robotPos.x === treasurePos.x && robotPos.y === treasurePos.y) {
+                document.getElementById('game-status').innerHTML = '🎉 <strong>Parabéns! Você encontrou o tesouro!</strong>';
+                completedLessons.add('algoritmos');
+                updateProgress();
+            }
+        }
+        
+        function resetGame() {
+            robotPos = {x: 0, y: 0};
+            initGame();
+        }
+        
+        function checkChallenge1() {
+            const answer1 = document.getElementById('challenge1-1').value;
+            const answer2 = document.getElementById('challenge1-2').value;
+            const result = document.getElementById('challenge1-result');
+            
+            if (answer1 === 'correct' && answer2 === 'correct') {
+                result.innerHTML = '<div class="step" style="background: #d4edda;">🎉 Perfeito! Você entendeu como comparar números!</div>';
+                completedLessons.add('desafios');
+                updateProgress();
+            } else {
+                result.innerHTML = '<div class="step" style="background: #f8d7da;">💡 Pense: queremos o MAIOR número. Qual símbolo usamos? E se número1 não for maior?</div>';
+            }
+        }
+        
+        function checkChallenge2() {
+            const answer = parseInt(document.getElementById('challenge2-answer').value);
+            const result = document.getElementById('challenge2-result');
+            const steps = document.getElementById('trace-steps');
+            
+            steps.innerHTML = `
+                <strong>Vamos rastrear:</strong><br>
+                Início: soma = 0<br>
+                i = 1: soma = 0 + 1 = 1<br>
+                i = 2: soma = 1 + 2 = 3<br>
+                i = 3: soma = 3 + 3 = 6<br>
+                Resultado: 6
+            `;
+            
+            if (answer === 6) {
+                result.innerHTML = '<div class="step" style="background: #d4edda;">🎉 Correto! Você conseguiu rastrear o algoritmo!</div>';
+                completedLessons.add('desafios');
+                updateProgress();
+            } else {
+                result.innerHTML = '<div class="step" style="background: #f8d7da;">❌ Não é isso. Veja o rastreamento abaixo:</div>';
+            }
+        }
+        
+        function updateProgress() {
+            const total = 5;
+            const completed = completedLessons.size;
+            const percentage = (completed / total) * 100;
+            
+            document.getElementById('progress').style.width = percentage + '%';
+            document.getElementById('progress-text').textContent = `Progresso: ${Math.round(percentage)}% (${completed}/${total})`;
+            
+            if (completed === total) {
+                setTimeout(() => {
+                    alert('🎉 Parabéns! Você completou todas as lições de lógica de programação! 🚀');
+                }, 500);
+            }
+        }
+        
+        // Initialize
